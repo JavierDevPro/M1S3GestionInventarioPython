@@ -51,24 +51,34 @@ def sumTotalPrices(pricesList):
 
 sumTotalPricesLambda = lambda pricesList: sum(pricesList)
 
+#######################FUNCTIONS OF VALIDATIONS AND INPUTS#########################
+
+#function data values validation as numbers and as a number that is bigger than 0.
+def validationNumbers(data):
+    try:
+        float(data)
+        if float(data)>0:
+            return True
+        else:
+            print(f"ERROR: El valor ingresado debe ser mayor a (0). \nPor ende {data} no esta permitido.")
+            return False
+    except ValueError:
+        print(f"ERROR: el valor ingresado no puede poseer alfanumericos. \nPor ende ({data}) no es admitido.")
+        return False
+
+#function for an input of price
+def addPrice(inputProductPrice):    
+    while (validationNumbers(inputProductPrice)==False):
+        inputProductPrice = input("Ingresa el precio unitario del producto: ")    
+    return inputProductPrice
+
+#function for an input of price
+def addQty(inputProductQty):
+    while (validationNumbers(inputProductQty)==False):
+        inputProductQty = input("Ingresa la cantidad del producto: ")    
+    return inputProductQty
 
 #####################test#############################
-productName = input("Ingresa el nombre del producto: ")
-productPrice = input("Ingresa el precio unitario del producto: ")
-productQty = input("Ingresa la cantidad del producto: ")
-addProductLambda(inventario, productName, productPrice, productQty)
-print(inventario)
-productName = input("Ingresa el nombre del producto: ")
-productPrice = input("Ingresa el precio unitario del producto: ")
-productQty = input("Ingresa la cantidad del producto: ")
-addProductLambda(inventario, productName, productPrice, productQty)
-print(inventario)
-productName = input("Ingresa el nombre del producto: ")
-productPrice = input("Ingresa el precio unitario del producto: ")
-productQty = input("Ingresa la cantidad del producto: ")
-addProductLambda(inventario, productName, productPrice, productQty)
-print(inventario)
-
 # consulta = input("Consulta por nombre al producto: ")
 # consultedValues = consultByNameLambda(inventario, consulta)
 # print(consultedValues)
@@ -82,7 +92,22 @@ print(inventario)
 # deleteProductByNameLambda(inventario, eliminar)
 # print(inventario)
 
-multipliedPricesList = calculateProductCostValues(inventario)
-print(multipliedPricesList)
-totalPrices = sumTotalPricesLambda(multipliedPricesList)
-print(totalPrices)
+# multipliedPricesList = calculateProductCostValues(inventario)
+# print(multipliedPricesList)
+# totalPrices = sumTotalPricesLambda(multipliedPricesList)
+# print(totalPrices)
+
+####################input-test##############################
+productName = input("Ingresa el nombre del producto: ")
+
+#peticion y funcion de 
+productPrice = input("Ingresa el precio unitario del producto: ")
+productPrice = addPrice(productPrice)
+
+#
+productQty = input("Ingresa la cantidad del producto: ")
+productQty = addQty(productQty)
+
+#
+addProductLambda(inventario, productName, productPrice, productQty)
+print(inventario)
