@@ -1,6 +1,6 @@
 #Estructura base del inventario
 inventario = {
-    "nombreProducto":("precio","cantidad")
+    # "nombreProducto":("precio","cantidad")
 }
 
 #las siguientes dos funciones realizan la misma funcion que es agregar al diccionario inventario un nuevo producto con sus valores respectivos
@@ -9,7 +9,7 @@ def add(dictionary, productName, productPrice, productQty):
     dictionary[productName] = (productPrice, productQty)
     return dictionary
 
-addLambda = lambda dictionary, productName, productPrice, productQty:(dictionary.update({productName: (productPrice, productQty)}), dictionary)[1]
+addProductLambda = lambda dictionary, productName, productPrice, productQty:(dictionary.update({productName: (productPrice, productQty)}), dictionary)[1]
 
 #funciones lambda y no lambda de consultar en el diccionario segun el nombre del producto e imprimir mensaje de confirmacion
 def consultByName(dictionary, productName):
@@ -29,21 +29,60 @@ def updateProductPrice(dictionary, productName, newPrice):
     dictionary[productName] = (newPrice, temporaryArray[1])
     return dictionary
 
-#delete product
+#delete product using product name and the metod del and for the lambda function i used the metod .pop to delete the key on the dictionary
+#its becouse lambda functions only admite expresions but not instructions.
+def deleteProductByName(dictionary, productName):
+    del dictionary[productName]
+    return dictionary
+
+deleteProductByNameLambda = lambda dictionary, productName: dictionary.pop(productName)
+
+#fuction that obtein one list with the product value from multiply the values of every single product ("price","productQty")
+def calculateProductCostValues(dictionary):
+    multipliedPricesList = []
+    for sublist in dictionary.values():
+        multipliedPricesList.append(float(sublist[0]) * int(sublist[1]))
+    return multipliedPricesList
+
+#fuction and lambda function sum values from a prices list calculated list
+def sumTotalPrices(pricesList):
+    totalPricesProducts = sum(pricesList)
+    return totalPricesProducts
+
+sumTotalPricesLambda = lambda pricesList: sum(pricesList)
 
 
 #####################test#############################
 productName = input("Ingresa el nombre del producto: ")
 productPrice = input("Ingresa el precio unitario del producto: ")
 productQty = input("Ingresa la cantidad del producto: ")
-addLambda(inventario, productName, productPrice, productQty)
+addProductLambda(inventario, productName, productPrice, productQty)
+print(inventario)
+productName = input("Ingresa el nombre del producto: ")
+productPrice = input("Ingresa el precio unitario del producto: ")
+productQty = input("Ingresa la cantidad del producto: ")
+addProductLambda(inventario, productName, productPrice, productQty)
+print(inventario)
+productName = input("Ingresa el nombre del producto: ")
+productPrice = input("Ingresa el precio unitario del producto: ")
+productQty = input("Ingresa la cantidad del producto: ")
+addProductLambda(inventario, productName, productPrice, productQty)
 print(inventario)
 
-consulta = input("Consulta por nombre al producto: ")
-consultedValues = consultByNameLambda(inventario, consulta)
-print(consultedValues)
-print(inventario)
+# consulta = input("Consulta por nombre al producto: ")
+# consultedValues = consultByNameLambda(inventario, consulta)
+# print(consultedValues)
+# print(inventario)
 
-newProductPrice = input("Ingrese el nuevo valor para el producto: ")
-updateProductPrice(inventario, consulta, newProductPrice)
-print(inventario)
+# newProductPrice = input("Ingrese el nuevo valor para el producto: ")
+# updateProductPrice(inventario, consulta, newProductPrice)
+# print(inventario)
+
+# eliminar = input("Ingrese un producto del inventario para eliminar: ")
+# deleteProductByNameLambda(inventario, eliminar)
+# print(inventario)
+
+multipliedPricesList = calculateProductCostValues(inventario)
+print(multipliedPricesList)
+totalPrices = sumTotalPricesLambda(multipliedPricesList)
+print(totalPrices)
