@@ -1,4 +1,5 @@
 class colors:
+    """clase de colores"""
     reset = '\033[0m'
     bold = '\033[01m'
     
@@ -17,7 +18,7 @@ inventory = {
     # "nombreProducto":("precio","cantidad")
 }
 answersAdding = ("si", "s", "no", "n")
-answersMenu = ("1","2","3","4","5","calcular", "consultar", "actualizar", "eliminar", "ingresar")
+answersMenu = ("1","2","3","4","5","calcular", "consultar", "actualizar", "eliminar", "ingresar", "6", "listar", "7", "salir")
 
 #######################TASK FUNCTIONS#########################
 
@@ -83,7 +84,7 @@ def validationNumbers(data):
             return False
     except ValueError:
         bonitificainador()
-        print(f"ERROR: el valor ingresado no puede poseer alfanumericos. \nPor ende ({data}) no es admitido.")
+        print(f"{colors.red}ERROR: el valor ingresado no puede poseer alfanumericos. \nPor ende ({data}) no es admitido.{colors.reset}")
         return False
 
 #function for an input of price
@@ -107,9 +108,9 @@ def askingForNewProduct():
         answer = input("Desea ingresar un nuevo producto? (Si/No) \n")
         if (validateAnswer(answersAdding, answer) == True):
             if (answer.lower() == "si" or answer.lower() == "s"):
-                return main()
+                return addMenu()
             else:
-                return optionMenu()
+                return showOptionMenu()
 
 #function charged to validate if an answer actually really exist in a list
 def validateAnswer(answersList, answer):
@@ -117,37 +118,57 @@ def validateAnswer(answersList, answer):
         return True
     else:
         bonitificainador()
-        print(f"ERROR: La respuesta ingresada {answer} no es valida!")
+        print(f"{colors.red}ERROR: La respuesta ingresada ({answer}) no es valida!{colors.reset}")
         return False
     
-def optionMenu():
+def askingForOptionMenu():
+    """Esta funcion valida primero que se ingrese una respuesta y segundo
+      \nque dicha respuesta exista por medio de la funcion validadora de respuestas
+      \npor ultimo compara cual fue la respuesta y dependiendo de la respuesta 
+      \nllamara a un proceso u otro."""
+    answer = input("\nQue deseas hacer? \n")
+    if (validateAnswer(answersMenu, answer)==True):
+        match answer.lower():
+            case "1" | "calcular":
+                exit()
+            case "2" | "consultar":
+                ()
+            case "3" | "actualizar":
+                ()
+            case "4" | "eliminar":
+                ()
+            case "5" | "ingresar":
+                addMenu()
+            case "6" | "listar":
+                print(colors.green, inventory, colors.reset)
+                showOptionMenu()
+            case "7" | "salir":
+                bonitificainador()
+                print(" "*5,f"{colors.bold}{colors.lightblue}HASTA LUEGO!\n{colors.reset}")
+                exit()
+            case _:
+                print("ERROR: Opcion no valida!")
+
+
+def showOptionMenu():    
+    """
+    Muestra el menu de opciones principal del
+    """
     while True:
         bonitificainador()
-        print("                 Menu opciones                      \n")
-        print(f"{colors.yellow}(1){colors.reset} - calcular total de la compra.\n")
-        print("(2) - consultar un valores de un producto.\n")
-        print("(3) - actualizar precios del producto.\n")
-        print("(4) - eliminar producto.\n")
-        print("(5) - ingresar mas productos.\n")
-        answer = input("\nQue deseas hacer? \n")
-        if (validateAnswer(answersMenu, answer)==True):
-            match answer.lower():
-                case "1" | "calcular":
-                    break
-                case "2" | "consultar":
-                    break
-                case "3" | "actualizar":
-                    break
-                case "4" | "eliminar":
-                    break
-                case "5" | "ingresar":
-                    main()
-                case _:
-                    print("ERROR: Opcion no valida!")
+        print("--"*5,f"{colors.bold}{colors.blue}MENU DE OPCIONES{colors.reset}","--"*5)
+        print(f"{colors.yellow}(1){colors.reset} - calcular total de la compra.")
+        print(f"{colors.yellow}(2){colors.reset} - consultar un valores de un producto.")
+        print(f"{colors.yellow}(3){colors.reset} - actualizar precios del producto.")
+        print(f"{colors.yellow}(4){colors.reset} - eliminar producto.")
+        print(f"{colors.yellow}(5){colors.reset} - ingresar productos.")
+        print(f"{colors.yellow}(6){colors.reset} - listar productos.")
+        print(f"{colors.yellow}(7){colors.reset} - salir.")
+        askingForOptionMenu()
 
 
 def bonitificainador():
-    print("##" * 40, "\n")
+    print("==" * 40, "\n")
         
 #####################Secuense-test#############################
 # consulta = input("Consulta por nombre al producto: ")
@@ -169,22 +190,25 @@ def bonitificainador():
 # print(totalPrices)
 
 ####################input-test##############################
-def main():
+def addMenu():
     bonitificainador()
-    productName = input("Ingresa el nombre del producto: \n")
+    print("--"*5,f"{colors.bold}{colors.blue}INGRESO DE INVENTARIO{colors.reset}","--"*5)
+    productName = input(f"{colors.yellow}1{colors.reset} - Ingresa el nombre del producto{colors.purple}:{colors.reset} \n     ")
 
     #peticion y funcion de 
-    productPrice = input("Ingresa el precio unitario del producto: \n")
+    productPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el precio unitario del producto{colors.purple}:{colors.reset} \n     ")
     productPrice = addPrice(productPrice)
 
     #
-    productQty = input("Ingresa la cantidad del producto: \n")
+    productQty = input(f"{colors.yellow}3{colors.reset} - Ingresa la cantidad del producto{colors.purple}:{colors.reset} \n     ")
     productQty = addQty(productQty)
 
     #
     addProductLambda(inventory, productName, productPrice, productQty)
     print(inventory)
-
     askingForNewProduct()
+
+def main():
+    showOptionMenu()
 
 main()
