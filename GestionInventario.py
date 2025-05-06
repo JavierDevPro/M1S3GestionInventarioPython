@@ -1,5 +1,6 @@
+#clase de colores para poner colores bonitos al texto.
 class colors:
-    """clase de colores"""
+    """clase de colores tomada de: https://github.com/elcheryu-u/Riwi/blob/71d271813211caeefcf3403f005d46e7eea2c3cf/desarrollo/ruta-basica/M1/S3/ENTRENAMIENTO/gestion-inventario.py"""
     reset = '\033[0m'
     bold = '\033[01m'
     
@@ -13,7 +14,7 @@ class colors:
     lightblue = '\033[94m'
     lightcyan = '\033[96m'
 
-#Estructura base del producto
+#Estructura base del producto en el diccionario inventario
 inventory = {
     # "nombreProducto":("precio","cantidad")
 }
@@ -37,6 +38,7 @@ def consultByName(dictionary, productName):
         return dictionary[productName]
     else:
         print(f"Producto {colors.red}({productName}) no encontrado!{colors.reset}")
+        return False        
 
 consultByNameLambda = lambda dictionary, productName: ((print("Producto encontrado!"), dictionary[productName]) if productName in dictionary.keys() else print("Producto no encontrado!"))[1]
 
@@ -140,7 +142,7 @@ def askingForOptionMenu():
             case "2" | "consultar":
                 consultMenu()
             case "3" | "actualizar":
-                ()
+                updatePriceMenu()
             case "4" | "eliminar":
                 ()
             case "5" | "ingresar":
@@ -178,20 +180,16 @@ def retryProcess(actualProcess):
         bonitificainador()
         answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
         if (validateAnswer(answersAdding, answer) == True):
-            if (answer.lower() == "si" or answer.lower() == "s"):
-                return actualProcess()
+            if (answer.lower() == "si" or answer.lower() == "s"):                                   
+                return actualProcess()                   
             else:
                 return showOptionMenu()
 
 def bonitificainador():
     print(f"{colors.blue}==" * 40, "\n",colors.reset)
+
         
 #####################Secuense-test#############################
-# consulta = input("Consulta por nombre al producto: ")
-# consultedValues = consultByNameLambda(inventario, consulta)
-# print(consultedValues)
-# print(inventario)
-
 # newProductPrice = input("Ingrese el nuevo valor para el producto: ")
 # updateProductPrice(inventario, consulta, newProductPrice)
 # print(inventario)
@@ -226,17 +224,31 @@ def addMenu():
 
 def consultMenu():
     bonitificainador()
+    print("el subproceso es: ")    
     print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
+    prompt = "Consulta por nombre del producto: "                
+    
+        # print("entro por actualizar")
+        # prompt = "Consulta por nombre del producto a modificar: "        
+
     if(validationDictionary(inventory)==True):
-        consultName = input("Consulta por nombre al producto: ")
-        consultedProduct = consultByName(inventory,consultName)
-        print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
-        retryProcess(consultMenu)    
+        consultName = input(prompt)
+        try:
+            consultedProduct = consultByName(inventory,consultName)
+            if consultedProduct != False:
+                print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
+            retryProcess(consultMenu)
+        except:
+            print(":c")
     else:
         print(f"{colors.red}ERROR: No has agregado ningun producto a tu inventario.{colors.reset}")
         askingForNewProduct()
 
-
+def updatePriceMenu():
+    bonitificainador()
+    print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
+    consultMenu()
+    
 
 def main():
     showOptionMenu()
