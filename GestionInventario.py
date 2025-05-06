@@ -33,10 +33,10 @@ addProductLambda = lambda dictionary, productName, productPrice, productQty:(dic
 #funciones lambda y no lambda de consultar en el diccionario segun el nombre del producto e imprimir mensaje de confirmacion
 def consultByName(dictionary, productName):
     if productName in dictionary.keys():
-        print("Producto encontrado!")
+        print(f"Producto {colors.green}({productName}) encontrado!{colors.reset}")
         return dictionary[productName]
     else:
-        print("Producto no encontrado!")
+        print(f"Producto {colors.red}({productName}) no encontrado!{colors.reset}")
 
 consultByNameLambda = lambda dictionary, productName: ((print("Producto encontrado!"), dictionary[productName]) if productName in dictionary.keys() else print("Producto no encontrado!"))[1]
 
@@ -73,6 +73,12 @@ sumTotalPricesLambda = lambda pricesList: sum(pricesList)
 #######################FUNCTIONS OF VALIDATIONS AND INPUTS#########################
 
 #function data values validation as numbers and as a number that is bigger than 0.
+def validationDictionary(dictionary):
+    if dictionary != {}:
+        return True
+    else:
+        return False
+    
 def validationNumbers(data):
     try:
         float(data)
@@ -132,7 +138,7 @@ def askingForOptionMenu():
             case "1" | "calcular":
                 exit()
             case "2" | "consultar":
-                ()
+                consultMenu()
             case "3" | "actualizar":
                 ()
             case "4" | "eliminar":
@@ -158,7 +164,7 @@ def showOptionMenu():
         bonitificainador()
         print("--"*5,f"{colors.bold}{colors.blue}MENU DE OPCIONES{colors.reset}","--"*5)
         print(f"{colors.yellow}(1){colors.reset} - calcular total de la compra.")
-        print(f"{colors.yellow}(2){colors.reset} - consultar un valores de un producto.")
+        print(f"{colors.yellow}(2){colors.reset} - consultar valores de un producto.")
         print(f"{colors.yellow}(3){colors.reset} - actualizar precios del producto.")
         print(f"{colors.yellow}(4){colors.reset} - eliminar producto.")
         print(f"{colors.yellow}(5){colors.reset} - ingresar productos.")
@@ -166,9 +172,19 @@ def showOptionMenu():
         print(f"{colors.yellow}(7){colors.reset} - salir.")
         askingForOptionMenu()
 
+def retryProcess(actualProcess):
+    bonitificainador()
+    while True:
+        bonitificainador()
+        answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
+        if (validateAnswer(answersAdding, answer) == True):
+            if (answer.lower() == "si" or answer.lower() == "s"):
+                return actualProcess()
+            else:
+                return showOptionMenu()
 
 def bonitificainador():
-    print("==" * 40, "\n")
+    print(f"{colors.blue}==" * 40, "\n",colors.reset)
         
 #####################Secuense-test#############################
 # consulta = input("Consulta por nombre al producto: ")
@@ -207,6 +223,20 @@ def addMenu():
     addProductLambda(inventory, productName, productPrice, productQty)
     print(inventory)
     askingForNewProduct()
+
+def consultMenu():
+    bonitificainador()
+    print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
+    if(validationDictionary(inventory)==True):
+        consultName = input("Consulta por nombre al producto: ")
+        consultedProduct = consultByName(inventory,consultName)
+        print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
+        retryProcess(consultMenu)    
+    else:
+        print(f"{colors.red}ERROR: No has agregado ningun producto a tu inventario.{colors.reset}")
+        askingForNewProduct()
+
+
 
 def main():
     showOptionMenu()
