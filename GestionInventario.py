@@ -1,3 +1,17 @@
+class colors:
+    reset = '\033[0m'
+    bold = '\033[01m'
+    
+    # colores
+    red = '\033[31m'
+    green = '\033[32m'
+    blue = '\033[34m'
+    purple = '\033[35m'
+    cyan = '\033[36m'
+    yellow = '\033[93m'
+    lightblue = '\033[94m'
+    lightcyan = '\033[96m'
+
 #Estructura base del producto
 inventory = {
     # "nombreProducto":("precio","cantidad")
@@ -65,7 +79,7 @@ def validationNumbers(data):
             return True
         else:
             bonitificainador()
-            print(f"ERROR: El valor ingresado debe ser mayor a (0). \nPor ende {data} no esta permitido.")
+            print(f"{colors.red}ERROR: El valor ingresado debe ser mayor a (0). \nPor ende {data} no esta permitido.{colors.reset}")
             return False
     except ValueError:
         bonitificainador()
@@ -110,7 +124,7 @@ def optionMenu():
     while True:
         bonitificainador()
         print("                 Menu opciones                      \n")
-        print("(1) - calcular total de la compra.\n")
+        print(f"{colors.yellow}(1){colors.reset} - calcular total de la compra.\n")
         print("(2) - consultar un valores de un producto.\n")
         print("(3) - actualizar precios del producto.\n")
         print("(4) - eliminar producto.\n")
@@ -126,11 +140,14 @@ def optionMenu():
                     break
                 case "4" | "eliminar":
                     break
-                case _:
+                case "5" | "ingresar":
                     main()
+                case _:
+                    print("ERROR: Opcion no valida!")
+
 
 def bonitificainador():
-    print("##" * 50, "\n")
+    print("##" * 40, "\n")
         
 #####################Secuense-test#############################
 # consulta = input("Consulta por nombre al producto: ")
