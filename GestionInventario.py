@@ -1,9 +1,13 @@
-#Estructura base del inventario
-inventario = {
+#Estructura base del producto
+inventory = {
     # "nombreProducto":("precio","cantidad")
 }
+answersAdding = ("si", "s", "no", "n")
+answersMenu = ("1","2","3","4","5","calcular", "consultar", "actualizar", "eliminar", "ingresar")
 
-#las siguientes dos funciones realizan la misma funcion que es agregar al diccionario inventario un nuevo producto con sus valores respectivos
+#######################TASK FUNCTIONS#########################
+
+#las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
 #la diferencia es que una es normal y la otra es lambda
 def add(dictionary, productName, productPrice, productQty):
     dictionary[productName] = (productPrice, productQty)
@@ -60,9 +64,11 @@ def validationNumbers(data):
         if float(data)>0:
             return True
         else:
+            bonitificainador()
             print(f"ERROR: El valor ingresado debe ser mayor a (0). \nPor ende {data} no esta permitido.")
             return False
     except ValueError:
+        bonitificainador()
         print(f"ERROR: el valor ingresado no puede poseer alfanumericos. \nPor ende ({data}) no es admitido.")
         return False
 
@@ -78,7 +84,55 @@ def addQty(inputProductQty):
         inputProductQty = input("Ingresa la cantidad del producto: ")    
     return inputProductQty
 
-#####################test#############################
+#######################FUNCTIONS OF SEQUENCE#########################
+
+#an function that ask if the user wants add a new product in a list
+def askingForNewProduct():
+    while True:
+        bonitificainador()
+        answer = input("Desea ingresar un nuevo producto? (Si/No) \n")
+        if (validateAnswer(answersAdding, answer) == True):
+            if (answer.lower() == "si" or answer.lower() == "s"):
+                return main()
+            else:
+                return optionMenu()
+
+#function charged to validate if an answer actually really exist in a list
+def validateAnswer(answersList, answer):
+    if answer in answersList:
+        return True
+    else:
+        bonitificainador()
+        print(f"ERROR: La respuesta ingresada {answer} no es valida!")
+        return False
+    
+def optionMenu():
+    while True:
+        bonitificainador()
+        print("                 Menu opciones                      \n")
+        print("(1) - calcular total de la compra.\n")
+        print("(2) - consultar un valores de un producto.\n")
+        print("(3) - actualizar precios del producto.\n")
+        print("(4) - eliminar producto.\n")
+        print("(5) - ingresar mas productos.\n")
+        answer = input("\nQue deseas hacer? \n")
+        if (validateAnswer(answersMenu, answer)==True):
+            match answer.lower():
+                case "1" | "calcular":
+                    break
+                case "2" | "consultar":
+                    break
+                case "3" | "actualizar":
+                    break
+                case "4" | "eliminar":
+                    break
+                case _:
+                    main()
+
+def bonitificainador():
+    print("##" * 50, "\n")
+        
+#####################Secuense-test#############################
 # consulta = input("Consulta por nombre al producto: ")
 # consultedValues = consultByNameLambda(inventario, consulta)
 # print(consultedValues)
@@ -98,16 +152,22 @@ def addQty(inputProductQty):
 # print(totalPrices)
 
 ####################input-test##############################
-productName = input("Ingresa el nombre del producto: ")
+def main():
+    bonitificainador()
+    productName = input("Ingresa el nombre del producto: \n")
 
-#peticion y funcion de 
-productPrice = input("Ingresa el precio unitario del producto: ")
-productPrice = addPrice(productPrice)
+    #peticion y funcion de 
+    productPrice = input("Ingresa el precio unitario del producto: \n")
+    productPrice = addPrice(productPrice)
 
-#
-productQty = input("Ingresa la cantidad del producto: ")
-productQty = addQty(productQty)
+    #
+    productQty = input("Ingresa la cantidad del producto: \n")
+    productQty = addQty(productQty)
 
-#
-addProductLambda(inventario, productName, productPrice, productQty)
-print(inventario)
+    #
+    addProductLambda(inventory, productName, productPrice, productQty)
+    print(inventory)
+
+    askingForNewProduct()
+
+main()
