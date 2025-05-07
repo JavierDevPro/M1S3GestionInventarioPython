@@ -19,8 +19,7 @@ inventory = {
     # "nombreProducto":("precio","cantidad")
 }
 answersAdding = ("si", "s", "no", "n")
-answersMenu = ("1","2","3","4","5","calcular", "consultar", "actualizar", "eliminar", "ingresar", "6", "listar", "7", "salir")
-subProcess = 0
+answersMenu = ("1", "2", "3", "4", "5", "6", "7", "calcular", "consultar", "actualizar", "eliminar", "ingresar", "listar", "salir")
 #######################TASK FUNCTIONS#########################
 
 #las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
@@ -81,16 +80,20 @@ sumTotalPricesLambda = lambda pricesList: sum(pricesList)
 
 #######################FUNCTIONS OF VALIDATIONS AND INPUTS#########################
 
-#function data values validation as numbers and as a number that is bigger than 0.
+
 def validationDictionary(dictionary):
     if dictionary != {}:
         return True
     else:
         return False
-    
-def validationNumbers(data):
+#function data values validation as numbers by decimal data type or integer data type and as a number that is bigger than 0.    
+def validationNumbers(data, type):
     try:
-        float(data)
+        if type == 1:
+            float(data)
+        elif type == 2:
+            int(data)
+        
         if float(data)>0:
             return True
         else:
@@ -99,18 +102,21 @@ def validationNumbers(data):
             return False
     except ValueError:
         bonitificainador()
-        print(f"{colors.red}ERROR: el valor ingresado no puede poseer alfanumericos. \nPor ende ({data}) no es admitido.{colors.reset}")
+        if data.isalpha():
+            print(f"{colors.red}ERROR: el valor ingresado no puede poseer alfanumericos. \nPor ende ({data}) no es admitido.{colors.reset}")
+        if type == 2 and not(data.isalpha()):
+            print(f"{colors.red}ERROR: el valor ingresado no puede ser decimal. \nPor ende ({data}) no es admitido.{colors.reset}")
         return False
 
-#function for an input of price
+#function for an input of price and calls the validation function.
 def addPrice(inputProductPrice):    
-    while (validationNumbers(inputProductPrice)==False):
+    while (validationNumbers(inputProductPrice,1)==False):
         inputProductPrice = input("Ingresa el precio unitario del producto: ")    
     return inputProductPrice
 
 #function for an input of price
 def addQty(inputProductQty):
-    while (validationNumbers(inputProductQty)==False):
+    while (validationNumbers(inputProductQty,2)==False):
         inputProductQty = input("Ingresa la cantidad del producto: ")    
     return inputProductQty
 
@@ -140,15 +146,14 @@ def validateAnswer(answersList, answer):
     except:
         print("ERROR: en la validacion S/N.")
     
-def askingForOptionMenu():
+def askingForOptionMainMenu():
     """Esta funcion valida primero que se ingrese una respuesta y segundo
       \nque dicha respuesta exista por medio de la funcion validadora de respuestas
       \npor ultimo compara cual fue la respuesta y dependiendo de la respuesta 
       \nllamara a un proceso u otro."""
     answer = input("\nQue deseas hacer? \n")
     if validateAnswer(answersMenu, answer):
-        subProcess = answer
-        print("subproceso actual: ", subProcess)
+        transformAnswertoSubprocess(answer)        
         match answer.lower():            
             case "1" | "calcular":
                 exit()
@@ -162,7 +167,7 @@ def askingForOptionMenu():
                 addMenu()
             case "6" | "listar":
                 print(colors.green, inventory, colors.reset)
-                showOptionMenu()
+                showMainMenu()
             case "7" | "salir":
                 bonitificainador()
                 print(" "*5,f"{colors.bold}{colors.lightblue}HASTA LUEGO!\n{colors.reset}")
@@ -171,7 +176,7 @@ def askingForOptionMenu():
                 print("ERROR: Opcion no valida!")
 
 
-def showOptionMenu():    
+def showMainMenu():    
     """
     Muestra el menu de opciones principal del
     """
@@ -185,12 +190,13 @@ def showOptionMenu():
         print(f"{colors.yellow}(5){colors.reset} - ingresar productos.")
         print(f"{colors.yellow}(6){colors.reset} - listar productos.")
         print(f"{colors.yellow}(7){colors.reset} - salir.")
-        askingForOptionMenu()
+        askingForOptionMainMenu()
 
 #this function restart the process called and if not close the actual process an back to the main proces and the while cicel in 
 #OptionMenu
 def restartProcess(actualProcess):
     bonitificainador()
+    print("subproceso actual: ", subProcess)
     while True:
         bonitificainador()
         answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
@@ -201,7 +207,21 @@ def restartProcess(actualProcess):
                 break
 
 def bonitificainador():
+    """The best function ever."""
     print(f"{colors.blue}==" * 40, "\n",colors.reset)
+
+def transformAnswertoSubprocess(answer):    
+    global subProcess    
+    match answer.lower():            
+            case "1" | "calcular":
+                answer = 1
+            case "2" | "consultar":
+                answer = 2
+            case "3" | "actualizar":
+                answer = 3
+            case "4" | "eliminar":
+                answer = 4            
+    subProcess = answer
 
         
 #####################Secuense-test#############################
@@ -238,12 +258,16 @@ def addMenu():
     askingForNewProduct()
 
 def consultMenu():
-    bonitificainador()    
-    print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
-    prompt = "Consulta por nombre del producto: "                
-    
-        # print("entro por actualizar")
-        # prompt = "Consulta por nombre del producto a modificar: "        
+    bonitificainador()
+    if subProcess==2:
+        print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
+        prompt = "Consulta por nombre del producto: "
+    elif subProcess == 3:
+        print("entro por actualizar")
+        prompt = "Consulta por nombre del producto a modificar: "
+    elif subProcess == 4:
+        print("entro por eliminar")
+        prompt = "Consulta por nombre del producto a eliminar: "
 
     if(validationDictionary(inventory)==True):
         consultName = input(prompt)
@@ -253,8 +277,10 @@ def consultMenu():
         try:
             if (consultedProduct != False):
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
-
-            restartProcess(consultMenu)
+                if (subProcess == 3):
+                    return consultName
+            
+            restartProcess(consultMenu)            
         except:
             print("ERROR: EN restartProcess o su llamada!")
     else:
@@ -263,12 +289,12 @@ def consultMenu():
 
 def updatePriceMenu():
     bonitificainador()
-    print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)    
-    consultMenu()
-    
-    
+    print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
+    consultedproductName =  consultMenu()
+    newProductPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")
+    print("supuesta consulta: ", consultedproductName)
+    print("teorico nuevo precio: ",newProductPrice)
+    newProductPrice = addPrice(newProductPrice)
+    updateProductPrice(inventory,consultedproductName,newProductPrice)
 
-def main():
-    showOptionMenu()
-
-main()
+showMainMenu()
