@@ -20,16 +20,16 @@ inventory = {
 }
 answersAdding = ("si", "s", "no", "n")
 answersMenu = ("1","2","3","4","5","calcular", "consultar", "actualizar", "eliminar", "ingresar", "6", "listar", "7", "salir")
-
+subProcess = 0
 #######################TASK FUNCTIONS#########################
 
 #las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
 #la diferencia es que una es normal y la otra es lambda
 def add(dictionary, productName, productPrice, productQty):
-    dictionary[productName] = (productPrice, productQty)
+    dictionary[productName] = (float(productPrice), int(productQty))
     return dictionary
 
-addProductLambda = lambda dictionary, productName, productPrice, productQty:(dictionary.update({productName: (productPrice, productQty)}), dictionary)[1]
+addProductLambda = lambda dictionary, productName, productPrice, productQty:(dictionary.update({productName: (float(productPrice), int(productQty))}), dictionary)[1]
 
 #funciones lambda y no lambda de consultar en el diccionario segun el nombre del producto e imprimir mensaje de confirmacion
 def consultByName(dictionary, productName):
@@ -46,14 +46,21 @@ consultByNameLambda = lambda dictionary, productName: ((print("Producto encontra
 #se tiene que modificar indirectamente tomando una copia de la tupla para poder acceder a las posiciones exacta de los valores y luego asi mantener el valor
 #de la posicion 1 que representa la cantidad de productos y poder modificar el precio unitario en la posicion[0]
 def updateProductPrice(dictionary, productName, newPrice):
-    temporaryArray = list(dictionary[productName])
-    dictionary[productName] = (newPrice, temporaryArray[1])
-    return dictionary
+    try:
+        temporaryArray = list(dictionary[productName])
+        dictionary[productName] = (newPrice, temporaryArray[1])
+        return dictionary
+    except:
+        print("ERROR: el producto no existe")
+    restartProcess(updateProductPrice)
 
 #delete product using product name and the metod del and for the lambda function i used the metod .pop to delete the key on the dictionary
 #its becouse lambda functions only admite expresions but not instructions.
 def deleteProductByName(dictionary, productName):
-    del dictionary[productName]
+    try:
+        del dictionary[productName]
+    except:
+        print("ERROR: el producto no existente")
     return dictionary
 
 deleteProductByNameLambda = lambda dictionary, productName: dictionary.pop(productName)
@@ -109,25 +116,29 @@ def addQty(inputProductQty):
 
 #######################FUNCTIONS OF SEQUENCE#########################
 
-#an function that ask if the user wants add a new product in a list
+#an function that ask if the user wants add a new product in a list here i need to use break to back to the OptionMenu
+#couse he is in a while cicle that means if i call again the optionMenu the program will enter into a new while true cicle of optionMenu
 def askingForNewProduct():
     while True:
         bonitificainador()
         answer = input("Desea ingresar un nuevo producto? (Si/No) \n")
         if (validateAnswer(answersAdding, answer) == True):
             if (answer.lower() == "si" or answer.lower() == "s"):
-                return addMenu()
+                addMenu()
             else:
-                return showOptionMenu()
+                break
 
 #function charged to validate if an answer actually really exist in a list
 def validateAnswer(answersList, answer):
-    if answer in answersList:
-        return True
-    else:
-        bonitificainador()
-        print(f"{colors.red}ERROR: La respuesta ingresada ({answer}) no es valida!{colors.reset}")
-        return False
+    try:
+        if answer in answersList:
+            return True
+        else:
+            bonitificainador()
+            print(f"{colors.red}ERROR: La respuesta ingresada ({answer}) no es valida!{colors.reset}")
+            return False
+    except:
+        print("ERROR: en la validacion S/N.")
     
 def askingForOptionMenu():
     """Esta funcion valida primero que se ingrese una respuesta y segundo
@@ -135,8 +146,10 @@ def askingForOptionMenu():
       \npor ultimo compara cual fue la respuesta y dependiendo de la respuesta 
       \nllamara a un proceso u otro."""
     answer = input("\nQue deseas hacer? \n")
-    if (validateAnswer(answersMenu, answer)==True):
-        match answer.lower():
+    if validateAnswer(answersMenu, answer):
+        subProcess = answer
+        print("subproceso actual: ", subProcess)
+        match answer.lower():            
             case "1" | "calcular":
                 exit()
             case "2" | "consultar":
@@ -174,16 +187,18 @@ def showOptionMenu():
         print(f"{colors.yellow}(7){colors.reset} - salir.")
         askingForOptionMenu()
 
-def retryProcess(actualProcess):
+#this function restart the process called and if not close the actual process an back to the main proces and the while cicel in 
+#OptionMenu
+def restartProcess(actualProcess):
     bonitificainador()
     while True:
         bonitificainador()
         answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
         if (validateAnswer(answersAdding, answer) == True):
             if (answer.lower() == "si" or answer.lower() == "s"):                                   
-                return actualProcess()                   
+                actualProcess()                   
             else:
-                return showOptionMenu()
+                break
 
 def bonitificainador():
     print(f"{colors.blue}==" * 40, "\n",colors.reset)
@@ -223,8 +238,7 @@ def addMenu():
     askingForNewProduct()
 
 def consultMenu():
-    bonitificainador()
-    print("el subproceso es: ")    
+    bonitificainador()    
     print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
     prompt = "Consulta por nombre del producto: "                
     
@@ -233,21 +247,25 @@ def consultMenu():
 
     if(validationDictionary(inventory)==True):
         consultName = input(prompt)
+        
+        consultedProduct = consultByName(inventory,consultName)###############posible error
+        print(consultedProduct)
         try:
-            consultedProduct = consultByName(inventory,consultName)
-            if consultedProduct != False:
+            if (consultedProduct != False):
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
-            retryProcess(consultMenu)
+
+            restartProcess(consultMenu)
         except:
-            print(":c")
+            print("ERROR: EN restartProcess o su llamada!")
     else:
         print(f"{colors.red}ERROR: No has agregado ningun producto a tu inventario.{colors.reset}")
         askingForNewProduct()
 
 def updatePriceMenu():
     bonitificainador()
-    print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
+    print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)    
     consultMenu()
+    
     
 
 def main():
