@@ -19,7 +19,13 @@ inventory = {
     # "nombreProducto":("precio","cantidad")
 }
 answersAdding = ("si", "s", "no", "n")
-answersMenu = ("1", "2", "3", "4", "5", "6", "7", "calcular", "consultar", "actualizar", "eliminar", "ingresar", "listar", "salir")
+answersMenu = (
+    "1", "2", "3", "4", "5", "6", "7",
+    "calcular", "consultar", "actualizar", "eliminar",
+    "ingresar", "listar", "salir"
+    )
+global validSequence2
+validSequence2 = False
 #######################TASK FUNCTIONS#########################
 
 #las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
@@ -32,12 +38,15 @@ addProductLambda = lambda dictionary, productName, productPrice, productQty:(dic
 
 #funciones lambda y no lambda de consultar en el diccionario segun el nombre del producto e imprimir mensaje de confirmacion
 def consultByName(dictionary, productName):
+    global validSequence2
     if productName in dictionary.keys():
         print(f"Producto {colors.green}({productName}) encontrado!{colors.reset}")
-        return dictionary[productName]
+        validSequence2 = True
+        return dictionary[productName], validSequence2
     else:
+        validSequence2 = False
         print(f"Producto {colors.red}({productName}) no encontrado!{colors.reset}")
-        return False        
+        return False, validSequence2
 
 consultByNameLambda = lambda dictionary, productName: ((print("Producto encontrado!"), dictionary[productName]) if productName in dictionary.keys() else print("Producto no encontrado!"))[1]
 
@@ -200,11 +209,14 @@ def restartProcess(actualProcess):
     while True:
         bonitificainador()
         answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
-        if (validateAnswer(answersAdding, answer) == True):
-            if (answer.lower() == "si" or answer.lower() == "s"):                                   
-                actualProcess()                   
+        if (validateAnswer(answersAdding, answer)):
+            if (answer.lower() == "si" or answer.lower() == "s"):
+                if subProcess == 2:
+                    return actualProcess()
+                elif subProcess == 3:                    
+                    return actualProcess()
             else:
-                break
+                return None
 
 def bonitificainador():
     """The best function ever."""
@@ -220,7 +232,7 @@ def transformAnswertoSubprocess(answer):
             case "3" | "actualizar":
                 answer = 3
             case "4" | "eliminar":
-                answer = 4            
+                answer = 4
     subProcess = answer
 
         
@@ -272,15 +284,15 @@ def consultMenu():
     if(validationDictionary(inventory)==True):
         consultName = input(prompt)
         
-        consultedProduct = consultByName(inventory,consultName)###############posible error
+        consultedProduct = consultByName(inventory,consultName)
         print(consultedProduct)
         try:
-            if (consultedProduct != False):
+            if consultedProduct:
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
                 if (subProcess == 3):
                     return consultName
-            
-            restartProcess(consultMenu)            
+            else:
+                return restartProcess(consultMenu)        
         except:
             print("ERROR: EN restartProcess o su llamada!")
     else:
@@ -288,13 +300,19 @@ def consultMenu():
         askingForNewProduct()
 
 def updatePriceMenu():
+    global validSequence2#posible amenaza eliminar todo lo relacionado a este dato si es dificil corregir.
+    validSequence2 = True
     bonitificainador()
     print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
     consultedproductName =  consultMenu()
-    newProductPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")
-    print("supuesta consulta: ", consultedproductName)
-    print("teorico nuevo precio: ",newProductPrice)
-    newProductPrice = addPrice(newProductPrice)
-    updateProductPrice(inventory,consultedproductName,newProductPrice)
+    if (validSequence2):
+        newProductPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")
+        print("supuesta consulta: ", consultedproductName)
+        print("teorico nuevo precio: ", newProductPrice)
+        newProductPrice = addPrice(newProductPrice)
+        updateProductPrice(inventory,consultedproductName,newProductPrice)        
+    else:
+        print(f"{colors.red}ERROR: No se puede modificar un producto que no existe.{colors.reset}")
+        restartProcess(updatePriceMenu)
 
 showMainMenu()
