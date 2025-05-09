@@ -43,8 +43,7 @@ def consultByName(dictionary, productName):
     if productName in dictionary.keys():
         print(f"Producto {colors.green}({productName}) encontrado!{colors.reset}")
         validUpdate = True
-        validDelete = True
-        print("se quedo aqui consultbyName")
+        validDelete = True        
         return dictionary[productName]
     else:
         validUpdate = False
@@ -73,8 +72,7 @@ def deleteProductByName(dictionary, productName):
         del dictionary[productName]
         return dictionary
     except:
-        print(f"{colors.red}ERROR: el producto no existe para eliminar{colors.reset}")
-    print("qqqq")    
+        print(f"{colors.red}ERROR: el producto no existe para eliminar{colors.reset}")    
 
 deleteProductByNameLambda = lambda dictionary, productName: dictionary.pop(productName)
 
@@ -180,6 +178,7 @@ def askingForOptionMainMenu():
             case "5" | "ingresar":
                 addMenu()
             case "6" | "listar":
+                bonitificainador()
                 print(colors.green, inventory, colors.reset)
                 showMainMenu()
             case "7" | "salir":
@@ -265,10 +264,10 @@ def consultMenu():
     bonitificainador()
     if subProcess==2:
         print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
-        prompt = "Consulta por nombre del producto: "
+        prompt = (f"{colors.yellow}+{colors.reset} - Ingresa el nombre del producto que desea consultar: {colors.purple}:{colors.reset} \n     ")
     elif subProcess == 3:
         print("Entrada de actualizar")
-        prompt = "Consulta por nombre del producto a modificar: "
+        prompt = (f"{colors.yellow}+{colors.reset} - Ingresa el nombre del producto que desea modificar: {colors.purple}:{colors.reset} \n     ")
     elif subProcess == 4:
         print("Entrada de eliminar")
         prompt = (f"{colors.yellow}+{colors.reset} - Ingresa el nombre del producto que desea eliminar: {colors.purple}:{colors.reset} \n     ")
@@ -277,8 +276,7 @@ def consultMenu():
         consultName = input(prompt)
         
         consultedProduct = consultByName(inventory,consultName)        
-        try:
-            print("esta retornando un : ",consultedProduct)
+        try:            
             if consultedProduct:
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
                 if (subProcess == 3 or subProcess == 4):                                      
@@ -289,7 +287,7 @@ def consultMenu():
                     return restartProcess(deleteProductMenu if subProcess == 4 else updatePriceMenu)
                 return restartProcess(consultMenu)
         except:
-            print("ERROR: EN restartProcess o su llamada!")
+            print("ERROR: En restartProcess o su llamada!")
     else:
         print(f"{colors.red}ERROR: No has agregado ningun producto a tu inventario.{colors.reset}")
         return askingForNewProduct()
