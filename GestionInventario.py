@@ -24,7 +24,7 @@ answersMenu = (
     "calcular", "consultar", "actualizar", "eliminar",
     "ingresar", "listar", "salir"
     )
-global validSequence2
+global validSequence3
 #######################TASK FUNCTIONS#########################
 
 #las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
@@ -39,12 +39,12 @@ addProductLambda = lambda dictionary, productName, productPrice, productQty:(dic
 def consultByName(dictionary, productName):
     if productName in dictionary.keys():
         print(f"Producto {colors.green}({productName}) encontrado!{colors.reset}")
-        validSequence2 = True
-        return dictionary[productName], validSequence2
+        validSequence3 = True
+        return dictionary[productName], validSequence3
     else:
-        validSequence2 = False
+        validSequence3 = False
         print(f"Producto {colors.red}({productName}) no encontrado!{colors.reset}")
-        return False, validSequence2
+        return False, validSequence3
 
 consultByNameLambda = lambda dictionary, productName: ((print("Producto encontrado!"), dictionary[productName]) if productName in dictionary.keys() else print("Producto no encontrado!"))[1]
 
@@ -303,7 +303,7 @@ def updatePriceMenu():
     bonitificainador()
     print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
     consultedproductName =  consultMenu()
-    if (validSequence2):
+    if (validSequence3):
         newProductPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")
         print("supuesta consulta: ", consultedproductName)
         print("teorico nuevo precio: ", newProductPrice)
