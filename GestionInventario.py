@@ -288,13 +288,12 @@ def consultMenu():
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
                 if (subProcess == 3 or subProcess == 4):                                      
                     return consultName
-                restartProcess(consultMenu)
+                return restartProcess(consultMenu)
             else:
-                print("no sale de aqui restart despues de devolver falso ?")
-                # if subProcess==4:
-                #     print("el subproceso entro a", subProcess)
-                #     return restartProcess(deleteProductMenu)
-                print("el subproceso entro a")
+                if subProcess in (3,4):
+                    print("no sale de aqui restart despues de devolver falso ?")
+                    print("el subproceso entro a")
+                    return restartProcess(deleteProductMenu if subProcess == 4 else updatePriceMenu)
                 return restartProcess(consultMenu)
         except:
             print("ERROR: EN restartProcess o su llamada!")
@@ -323,13 +322,17 @@ def deleteProductMenu():
     bonitificainador()
     print("--"*5,f"{colors.bold}{colors.blue}ELIMINACION DE INVENTARIO{colors.reset}","--"*5)
     consultedproductName =  consultMenu()
-    print("pasa aqui?")
+
+    if consultedproductName == None:
+        return
+
     if (validDelete):
-        print("pasa aqui 2")
-        #nameToDelete = input(f"{colors.yellow}+{colors.reset} - Ingresa el nombre del producto que desea eliminar: {colors.purple}:{colors.reset} \n     ")
+        print("pasa aqui 2")        
         deleteProductByName(inventory,consultedproductName)
-    else:
-        print("que hace aca ?")
+        bonitificainador()
+        print(f"{colors.green}Producto '{consultedproductName}' eliminado exitosamente.{colors.reset}")
+        return restartProcess(deleteProductMenu)
+    else:        
         if (validationDictionary(inventory)):
             print(f"{colors.red}ERROR: No se puede eliminar un producto que no existe.{colors.reset}")
 
