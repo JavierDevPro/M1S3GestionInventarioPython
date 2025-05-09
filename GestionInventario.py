@@ -25,6 +25,7 @@ answersMenu = (
     "ingresar", "listar", "salir"
     )
 validUpdate = False
+validDelete = False
 #######################TASK FUNCTIONS#########################
 
 #las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
@@ -38,12 +39,16 @@ addProductLambda = lambda dictionary, productName, productPrice, productQty:(dic
 #funciones lambda y no lambda de consultar en el diccionario segun el nombre del producto e imprimir mensaje de confirmacion
 def consultByName(dictionary, productName):
     global validUpdate
+    global validDelete
     if productName in dictionary.keys():
         print(f"Producto {colors.green}({productName}) encontrado!{colors.reset}")
         validUpdate = True
+        validDelete = True
+        print("se quedo aqui consultbyName")
         return dictionary[productName]
     else:
         validUpdate = False
+        validDelete = False
         print(f"Producto {colors.red}({productName}) no encontrado!{colors.reset}")
         return False
 
@@ -58,17 +63,18 @@ def updateProductPrice(dictionary, productName, newPrice):
         dictionary[productName] = (newPrice, temporaryArray[1])
         return dictionary
     except:
-        print("ERROR: el producto no existe")
-    restartProcess(updateProductPrice)
+        print(f"{colors.red}ERROR: El producto no existe para modificar{colors.reset}")
+        return
 
 #delete product using product name and the metod del and for the lambda function i used the metod .pop to delete the key on the dictionary
 #its becouse lambda functions only admite expresions but not instructions.
 def deleteProductByName(dictionary, productName):
     try:
         del dictionary[productName]
+        return dictionary
     except:
-        print("ERROR: el producto no existente")
-    return dictionary
+        print(f"{colors.red}ERROR: el producto no existe para eliminar{colors.reset}")
+    print("qqqq")    
 
 deleteProductByNameLambda = lambda dictionary, productName: dictionary.pop(productName)
 
@@ -170,7 +176,7 @@ def askingForOptionMainMenu():
             case "3" | "actualizar":
                 updatePriceMenu()
             case "4" | "eliminar":
-                ()
+                deleteProductMenu()
             case "5" | "ingresar":
                 addMenu()
             case "6" | "listar":
@@ -208,11 +214,8 @@ def restartProcess(actualProcess):
         bonitificainador()
         answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
         if (validateAnswer(answersAdding, answer)):
-            if (answer.lower() == "si" or answer.lower() == "s"):
-                if subProcess == 2:
-                    return actualProcess()
-                elif subProcess == 3:
-                    return actualProcess()
+            if (answer.lower() == "si" or answer.lower() == "s"):               
+                return actualProcess()                
             else:
                 return None
 
@@ -235,10 +238,6 @@ def transformAnswertoSubprocess(answer):
 
         
 #####################Secuense-test#############################
-# newProductPrice = input("Ingrese el nuevo valor para el producto: ")
-# updateProductPrice(inventario, consulta, newProductPrice)
-# print(inventario)
-
 # eliminar = input("Ingrese un producto del inventario para eliminar: ")
 # deleteProductByNameLambda(inventario, eliminar)
 # print(inventario)
@@ -273,23 +272,29 @@ def consultMenu():
         print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
         prompt = "Consulta por nombre del producto: "
     elif subProcess == 3:
-        print("entro por actualizar")
+        print("Entrada de actualizar")
         prompt = "Consulta por nombre del producto a modificar: "
     elif subProcess == 4:
-        print("entro por eliminar")
-        prompt = "Consulta por nombre del producto a eliminar: "
+        print("Entrada de eliminar")
+        prompt = (f"{colors.yellow}+{colors.reset} - Ingresa el nombre del producto que desea eliminar: {colors.purple}:{colors.reset} \n     ")
 
     if(validationDictionary(inventory)==True):
         consultName = input(prompt)
         
         consultedProduct = consultByName(inventory,consultName)        
         try:
+            print("esta retornando un : ",consultedProduct)
             if consultedProduct:
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
-                if (subProcess == 3):                                      
+                if (subProcess == 3 or subProcess == 4):                                      
                     return consultName
-                return restartProcess(consultMenu)
+                restartProcess(consultMenu)
             else:
+                print("no sale de aqui restart despues de devolver falso ?")
+                # if subProcess==4:
+                #     print("el subproceso entro a", subProcess)
+                #     return restartProcess(deleteProductMenu)
+                print("el subproceso entro a")
                 return restartProcess(consultMenu)
         except:
             print("ERROR: EN restartProcess o su llamada!")
@@ -303,15 +308,29 @@ def updatePriceMenu():
     print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
     consultedproductName =  consultMenu()    
     if (validUpdate):
-        newProductPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")        
+        newProductPrice = input(f"{colors.yellow}+{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")        
         newProductPrice = addPrice(newProductPrice)
         updateProductPrice(inventory,consultedproductName,newProductPrice)
         bonitificainador()
         print("--"*5,f"{colors.bold}{colors.green}PRODUCTO MODIFICADO EXITOSAMENTE{colors.reset}","--"*5)
         print(f"{colors.bold}{colors.green}Producto: {consultedproductName}\nNuevo precio unitario: {float(inventory[consultedproductName][0])}.{colors.reset}")
-        restartProcess(updatePriceMenu)
+        return restartProcess(updatePriceMenu)
     else:
         if (validationDictionary(inventory)):
             print(f"{colors.red}ERROR: No se puede modificar un producto que no existe.{colors.reset}")        
+
+def deleteProductMenu():
+    bonitificainador()
+    print("--"*5,f"{colors.bold}{colors.blue}ELIMINACION DE INVENTARIO{colors.reset}","--"*5)
+    consultedproductName =  consultMenu()
+    print("pasa aqui?")
+    if (validDelete):
+        print("pasa aqui 2")
+        #nameToDelete = input(f"{colors.yellow}+{colors.reset} - Ingresa el nombre del producto que desea eliminar: {colors.purple}:{colors.reset} \n     ")
+        deleteProductByName(inventory,consultedproductName)
+    else:
+        print("que hace aca ?")
+        if (validationDictionary(inventory)):
+            print(f"{colors.red}ERROR: No se puede eliminar un producto que no existe.{colors.reset}")
 
 showMainMenu()
