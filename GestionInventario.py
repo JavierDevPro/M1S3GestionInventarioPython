@@ -170,7 +170,7 @@ def askingForOptionMainMenu():
         transformAnswertoSubprocess(answer)
         match answer.lower():
             case "1" | "calcular":
-                exit()
+                calculationTotalMenu()
             case "2" | "consultar":
                 consultMenu()
             case "3" | "actualizar":
@@ -238,10 +238,6 @@ def transformAnswertoSubprocess(answer):
 
         
 #####################Secuense-test#############################
-# eliminar = input("Ingrese un producto del inventario para eliminar: ")
-# deleteProductByNameLambda(inventario, eliminar)
-# print(inventario)
-
 # multipliedPricesList = calculateProductCostValues(inventario)
 # print(multipliedPricesList)
 # totalPrices = sumTotalPricesLambda(multipliedPricesList)
@@ -257,13 +253,12 @@ def addMenu():
     productPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el precio unitario del producto{colors.purple}:{colors.reset} \n     ")
     productPrice = addPrice(productPrice)
 
-    #
     productQty = input(f"{colors.yellow}3{colors.reset} - Ingresa la cantidad del producto{colors.purple}:{colors.reset} \n     ")
     productQty = addQty(productQty)
 
-    #
+    #Lambda implementation of the valid values
     addProductLambda(inventory, productName, productPrice, productQty)
-    print(inventory)
+    print(f"{colors.green}Producto ingresado correctamente: {productName}\nPrecio: {productPrice}$\nCantidad: {productQty}{colors.reset}")
     return askingForNewProduct()
 
 def consultMenu():
@@ -290,9 +285,7 @@ def consultMenu():
                     return consultName
                 return restartProcess(consultMenu)
             else:
-                if subProcess in (3,4):
-                    print("no sale de aqui restart despues de devolver falso ?")
-                    print("el subproceso entro a")
+                if subProcess in (3,4):                  
                     return restartProcess(deleteProductMenu if subProcess == 4 else updatePriceMenu)
                 return restartProcess(consultMenu)
         except:
@@ -326,8 +319,7 @@ def deleteProductMenu():
     if consultedproductName == None:
         return
 
-    if (validDelete):
-        print("pasa aqui 2")        
+    if (validDelete):               
         deleteProductByName(inventory,consultedproductName)
         bonitificainador()
         print(f"{colors.green}Producto '{consultedproductName}' eliminado exitosamente.{colors.reset}")
@@ -335,5 +327,16 @@ def deleteProductMenu():
     else:        
         if (validationDictionary(inventory)):
             print(f"{colors.red}ERROR: No se puede eliminar un producto que no existe.{colors.reset}")
+
+def calculationTotalMenu():
+    if validationDictionary(inventory):
+        bonitificainador()
+        print("--"*5,f"{colors.bold}{colors.blue}SUMATORIA DEL COSTO TOTAL DEL INVENTARIO{colors.reset}","--"*5)
+        multipliedPricesList = calculateProductCostValues(inventory)
+        totalPrices = sumTotalPricesLambda(multipliedPricesList)
+        print(f"{colors.bold}{colors.blue}El valor de compra de todos los PRODUCTOS:{colors.reset}\n{colors.lightblue}{inventory} \nEs de: {colors.reset}{colors.yellow}{colors.bold}{totalPrices}${colors.reset}")
+        restartProcess(calculationTotalMenu)
+    else:
+        print(f"{colors.red}ERROR: no se puede calcular ningun total si no hay ningun producto.{colors.reset}")
 
 showMainMenu()
