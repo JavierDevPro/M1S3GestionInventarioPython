@@ -24,7 +24,7 @@ answersMenu = (
     "calcular", "consultar", "actualizar", "eliminar",
     "ingresar", "listar", "salir"
     )
-global validSequence3
+validUpdate = False
 #######################TASK FUNCTIONS#########################
 
 #las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
@@ -37,14 +37,15 @@ addProductLambda = lambda dictionary, productName, productPrice, productQty:(dic
 
 #funciones lambda y no lambda de consultar en el diccionario segun el nombre del producto e imprimir mensaje de confirmacion
 def consultByName(dictionary, productName):
+    global validUpdate
     if productName in dictionary.keys():
         print(f"Producto {colors.green}({productName}) encontrado!{colors.reset}")
-        validSequence3 = True
-        return dictionary[productName], validSequence3
+        validUpdate = True
+        return dictionary[productName]
     else:
-        validSequence3 = False
+        validUpdate = False
         print(f"Producto {colors.red}({productName}) no encontrado!{colors.reset}")
-        return False, validSequence3
+        return False
 
 consultByNameLambda = lambda dictionary, productName: ((print("Producto encontrado!"), dictionary[productName]) if productName in dictionary.keys() else print("Producto no encontrado!"))[1]
 
@@ -202,8 +203,7 @@ def showMainMenu():
 #this function restart the process called and if not close the actual process an back to the main proces and the while cicel in 
 #OptionMenu
 def restartProcess(actualProcess):
-    bonitificainador()
-    print("subproceso actual: ", subProcess)
+    bonitificainador()    
     while True:
         bonitificainador()
         answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
@@ -282,12 +282,11 @@ def consultMenu():
     if(validationDictionary(inventory)==True):
         consultName = input(prompt)
         
-        consultedProduct = consultByName(inventory,consultName)[0]
-        print(consultedProduct)
+        consultedProduct = consultByName(inventory,consultName)        
         try:
             if consultedProduct:
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
-                if (subProcess == 3):
+                if (subProcess == 3):                                      
                     return consultName
                 return restartProcess(consultMenu)
             else:
@@ -302,14 +301,17 @@ def updatePriceMenu():
     #posible amenaza eliminar todo lo relacionado a este dato si es dificil corregir.    
     bonitificainador()
     print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
-    consultedproductName =  consultMenu()
-    if (validSequence3):
-        newProductPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")
-        print("supuesta consulta: ", consultedproductName)
-        print("teorico nuevo precio: ", newProductPrice)
+    consultedproductName =  consultMenu()    
+    if (validUpdate):
+        newProductPrice = input(f"{colors.yellow}2{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")        
         newProductPrice = addPrice(newProductPrice)
         updateProductPrice(inventory,consultedproductName,newProductPrice)
+        bonitificainador()
+        print("--"*5,f"{colors.bold}{colors.green}PRODUCTO MODIFICADO EXITOSAMENTE{colors.reset}","--"*5)
+        print(f"{colors.bold}{colors.green}Producto: {consultedproductName}\nNuevo precio unitario: {float(inventory[consultedproductName][0])}.{colors.reset}")
+        restartProcess(updatePriceMenu)
     else:
-        print(f"{colors.red}ERROR: No se puede modificar un producto que no existe.{colors.reset}")        
+        if (validationDictionary(inventory)):
+            print(f"{colors.red}ERROR: No se puede modificar un producto que no existe.{colors.reset}")        
 
 showMainMenu()
