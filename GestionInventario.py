@@ -1,10 +1,10 @@
-#clase de colores para poner colores bonitos al texto.
+#color class that change the color of the text printed
 class colors:
     """clase de colores tomada de: https://github.com/elcheryu-u/Riwi/blob/71d271813211caeefcf3403f005d46e7eea2c3cf/desarrollo/ruta-basica/M1/S3/ENTRENAMIENTO/gestion-inventario.py"""
     reset = '\033[0m'
     bold = '\033[01m'
     
-    # colores
+    # colors
     red = '\033[31m'
     green = '\033[32m'
     blue = '\033[34m'
@@ -14,7 +14,7 @@ class colors:
     lightblue = '\033[94m'
     lightcyan = '\033[96m'
 
-#Estructura base del producto en el diccionario inventario
+#base structure for the principal Dictionary, and datas that are necesarie
 inventory = {
     # "nombreProducto":("precio","cantidad")
 }
@@ -28,15 +28,16 @@ validUpdate = False
 validDelete = False
 #######################TASK FUNCTIONS#########################
 
-#las siguientes dos funciones realizan la misma funcion que es agregar al diccionario product un nuevo producto con sus valores respectivos
-#la diferencia es que una es normal y la otra es lambda
+# The following two functions perform the same task: adding a new product to the inventory dictionary with its corresponding values.
+# The difference is that one is a regular function, and the other is a lambda function.
 def add(dictionary, productName, productPrice, productQty):
     dictionary[productName] = (float(productPrice), int(productQty))
     return dictionary
 
 addProductLambda = lambda dictionary, productName, productPrice, productQty:(dictionary.update({productName: (float(productPrice), int(productQty))}), dictionary)[1]
 
-#funciones lambda y no lambda de consultar en el diccionario segun el nombre del producto e imprimir mensaje de confirmacion
+# Lambda and regular functions to search for a product by name in the dictionary
+# and display a confirmation message based on whether it was found.
 def consultByName(dictionary, productName):
     global validUpdate
     global validDelete
@@ -53,9 +54,10 @@ def consultByName(dictionary, productName):
 
 consultByNameLambda = lambda dictionary, productName: ((print("Producto encontrado!"), dictionary[productName]) if productName in dictionary.keys() else print("Producto no encontrado!"))[1]
 
-#funcion que actualice el precio, RECORDATORIO: como el valor en el diccionario es una tupla el valor no se puede modificar directamente es por ello que 
-#se tiene que modificar indirectamente tomando una copia de la tupla para poder acceder a las posiciones exacta de los valores y luego asi mantener el valor
-#de la posicion 1 que representa la cantidad de productos y poder modificar el precio unitario en la posicion[0]
+# Function to update the price of a product.
+# REMINDER: Since the value in the dictionary is a tuple (price, quantity), it is immutable and cannot be modified directly.
+# To update the price, a copy of the tuple must be made, preserving the quantity at position [1],
+# while modifying the unit price at position [0]. The updated tuple is then reassigned to the dictionary.
 def updateProductPrice(dictionary, productName, newPrice):
     try:
         temporaryArray = list(dictionary[productName])
@@ -157,7 +159,8 @@ def validateAnswer(answersList, answer):
             return False
     except:
         print("ERROR: en la validacion S/N.")
-    
+
+#logic function for the main Menu
 def askingForOptionMainMenu():
     """Esta funcion valida primero que se ingrese una respuesta y segundo
       \nque dicha respuesta exista por medio de la funcion validadora de respuestas
@@ -188,7 +191,7 @@ def askingForOptionMainMenu():
             case _:
                 print("ERROR: Opcion no valida!")
 
-
+#function charged to be the one who prints all the base Menu
 def showMainMenu():
     """
     Muestra el menu de opciones principal del
@@ -234,15 +237,8 @@ def transformAnswertoSubprocess(answer):
             case "4" | "eliminar":
                 answer = 4
     subProcess = answer
-
         
-#####################Secuense-test#############################
-# multipliedPricesList = calculateProductCostValues(inventario)
-# print(multipliedPricesList)
-# totalPrices = sumTotalPricesLambda(multipliedPricesList)
-# print(totalPrices)
-
-####################input-test##############################
+####################INPUT OR MENU-AREA##############################
 def addMenu():
     bonitificainador()
     print("--"*5,f"{colors.bold}{colors.blue}INGRESO DE INVENTARIO{colors.reset}","--"*5)
@@ -292,8 +288,7 @@ def consultMenu():
         print(f"{colors.red}ERROR: No has agregado ningun producto a tu inventario.{colors.reset}")
         return askingForNewProduct()
 
-def updatePriceMenu():
-    #posible amenaza eliminar todo lo relacionado a este dato si es dificil corregir.    
+def updatePriceMenu():    
     bonitificainador()
     print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
     consultedproductName =  consultMenu()    
