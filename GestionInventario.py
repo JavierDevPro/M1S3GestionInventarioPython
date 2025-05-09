@@ -30,7 +30,7 @@ validDelete = False
 
 # The following two functions perform the same task: adding a new product to the inventory dictionary with its corresponding values.
 # The difference is that one is a regular function, and the other is a lambda function.
-def add(dictionary, productName, productPrice, productQty):
+def addProduct(dictionary, productName, productPrice, productQty):
     dictionary[productName] = (float(productPrice), int(productQty))
     return dictionary
 
