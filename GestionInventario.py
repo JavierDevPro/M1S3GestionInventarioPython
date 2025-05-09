@@ -111,11 +111,11 @@ def validationNumbers(data, type):
         if float(data)>0:
             return True
         else:
-            bonitificainador()
+            decorationFunction()
             print(f"{colors.red}ERROR: El valor ingresado debe ser mayor a (0). \nPor ende {data} no esta permitido.{colors.reset}")
             return False
     except ValueError:
-        bonitificainador()
+        decorationFunction()
         if data.isalpha():
             print(f"{colors.red}ERROR: el valor ingresado no puede poseer alfanumericos. \nPor ende ({data}) no es admitido.{colors.reset}")
         if type == 2 and not(data.isalpha()):
@@ -140,7 +140,7 @@ def addQty(inputProductQty):
 #couse he is in a while cicle that means if i call again the optionMenu the program will enter into a new while true cicle of optionMenu
 def askingForNewProduct():
     while True:
-        bonitificainador()
+        decorationFunction()
         answer = input("Desea ingresar un nuevo producto? (Si/No) \n")
         if (validateAnswer(answersAdding, answer) == True):
             if (answer.lower() == "si" or answer.lower() == "s"):
@@ -154,7 +154,7 @@ def validateAnswer(answersList, answer):
         if answer in answersList:
             return True
         else:
-            bonitificainador()
+            decorationFunction()
             print(f"{colors.red}ERROR: La respuesta ingresada ({answer}) no es valida!{colors.reset}")
             return False
     except:
@@ -181,11 +181,11 @@ def askingForOptionMainMenu():
             case "5" | "ingresar":
                 addMenu()
             case "6" | "listar":
-                bonitificainador()
+                decorationFunction()
                 print(colors.green, inventory, colors.reset)
                 showMainMenu()
             case "7" | "salir":
-                bonitificainador()
+                decorationFunction()
                 print(" "*5,f"{colors.bold}{colors.lightblue}HASTA LUEGO!\n{colors.reset}")
                 exit()
             case _:
@@ -197,7 +197,7 @@ def showMainMenu():
     Muestra el menu de opciones principal del
     """
     while True:
-        bonitificainador()
+        decorationFunction()
         print("--"*5,f"{colors.bold}{colors.blue}MENU DE OPCIONES{colors.reset}","--"*5)
         print(f"{colors.yellow}(1){colors.reset} - calcular total de la compra.")
         print(f"{colors.yellow}(2){colors.reset} - consultar valores de un producto.")
@@ -211,9 +211,9 @@ def showMainMenu():
 #this function restart the process called and if not close the actual process an back to the main proces and the while cicel in 
 #OptionMenu
 def restartProcess(actualProcess):
-    bonitificainador()    
+    decorationFunction()    
     while True:
-        bonitificainador()
+        decorationFunction()
         answer = input("Desea intentar de nuevo el proceso? (Si/No) \n")
         if (validateAnswer(answersAdding, answer)):
             if (answer.lower() == "si" or answer.lower() == "s"):               
@@ -221,7 +221,7 @@ def restartProcess(actualProcess):
             else:
                 return None
 
-def bonitificainador():
+def decorationFunction():
     """The best function ever."""
     print(f"{colors.blue}==" * 40, "\n",colors.reset)
 
@@ -240,7 +240,7 @@ def transformAnswertoSubprocess(answer):
         
 ####################INPUT OR MENU-AREA##############################
 def addMenu():
-    bonitificainador()
+    decorationFunction()
     print("--"*5,f"{colors.bold}{colors.blue}INGRESO DE INVENTARIO{colors.reset}","--"*5)
     productName = input(f"{colors.yellow}1{colors.reset} - Ingresa el nombre del producto{colors.purple}:{colors.reset} \n     ")
 
@@ -257,7 +257,7 @@ def addMenu():
     return askingForNewProduct()
 
 def consultMenu():
-    bonitificainador()
+    decorationFunction()
     if subProcess==2:
         print("--"*5,f"{colors.bold}{colors.blue}CONSULTA DE INVENTARIO{colors.reset}","--"*5)
         prompt = (f"{colors.yellow}+{colors.reset} - Ingresa el nombre del producto que desea consultar: {colors.purple}:{colors.reset} \n     ")
@@ -289,14 +289,14 @@ def consultMenu():
         return askingForNewProduct()
 
 def updatePriceMenu():    
-    bonitificainador()
+    decorationFunction()
     print("--"*5,f"{colors.bold}{colors.blue}MODIFICACION DE INVENTARIO{colors.reset}","--"*5)
     consultedproductName =  consultMenu()    
     if (validUpdate):
         newProductPrice = input(f"{colors.yellow}+{colors.reset} - Ingresa el nuevo precio unitario del producto{colors.purple}:{colors.reset} \n     ")        
         newProductPrice = addPrice(newProductPrice)
         updateProductPrice(inventory,consultedproductName,newProductPrice)
-        bonitificainador()
+        decorationFunction()
         print("--"*5,f"{colors.bold}{colors.green}PRODUCTO MODIFICADO EXITOSAMENTE{colors.reset}","--"*5)
         print(f"{colors.bold}{colors.green}Producto: {consultedproductName}\nNuevo precio unitario: {float(inventory[consultedproductName][0])}.{colors.reset}")
         return restartProcess(updatePriceMenu)
@@ -305,7 +305,7 @@ def updatePriceMenu():
             print(f"{colors.red}ERROR: No se puede modificar un producto que no existe.{colors.reset}")        
 
 def deleteProductMenu():
-    bonitificainador()
+    decorationFunction()
     print("--"*5,f"{colors.bold}{colors.blue}ELIMINACION DE INVENTARIO{colors.reset}","--"*5)
     consultedproductName =  consultMenu()
 
@@ -314,7 +314,7 @@ def deleteProductMenu():
 
     if (validDelete):               
         deleteProductByName(inventory,consultedproductName)
-        bonitificainador()
+        decorationFunction()
         print(f"{colors.green}Producto '{consultedproductName}' eliminado exitosamente.{colors.reset}")
         return restartProcess(deleteProductMenu)
     else:        
@@ -323,7 +323,7 @@ def deleteProductMenu():
 
 def calculationTotalMenu():
     if validationDictionary(inventory):
-        bonitificainador()
+        decorationFunction()
         print("--"*5,f"{colors.bold}{colors.blue}SUMATORIA DEL COSTO TOTAL DEL INVENTARIO{colors.reset}","--"*5)
         multipliedPricesList = calculateProductCostValues(inventory)
         totalPrices = sumTotalPricesLambda(multipliedPricesList)
