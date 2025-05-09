@@ -139,7 +139,7 @@ def askingForNewProduct():
         answer = input("Desea ingresar un nuevo producto? (Si/No) \n")
         if (validateAnswer(answersAdding, answer) == True):
             if (answer.lower() == "si" or answer.lower() == "s"):
-                addMenu()
+                return addMenu()
             else:
                 break
 
@@ -267,7 +267,7 @@ def addMenu():
     #
     addProductLambda(inventory, productName, productPrice, productQty)
     print(inventory)
-    askingForNewProduct()
+    return askingForNewProduct()
 
 def consultMenu():
     bonitificainador()
@@ -284,20 +284,21 @@ def consultMenu():
     if(validationDictionary(inventory)==True):
         consultName = input(prompt)
         
-        consultedProduct = consultByName(inventory,consultName)
+        consultedProduct = consultByName(inventory,consultName)[0]
         print(consultedProduct)
         try:
             if consultedProduct:
                 print(f"{colors.bold}{colors.green}Precio unitario: {float(consultedProduct[0])}. \nCantidad: {int(consultedProduct[1])}{colors.green}")
                 if (subProcess == 3):
                     return consultName
+                return restartProcess(consultMenu)
             else:
-                return restartProcess(consultMenu)        
+                return restartProcess(consultMenu)
         except:
             print("ERROR: EN restartProcess o su llamada!")
     else:
         print(f"{colors.red}ERROR: No has agregado ningun producto a tu inventario.{colors.reset}")
-        askingForNewProduct()
+        #askingForNewProduct()
 
 def updatePriceMenu():
     global validSequence2#posible amenaza eliminar todo lo relacionado a este dato si es dificil corregir.
